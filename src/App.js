@@ -1,36 +1,22 @@
+
 import React, {useState} from 'react';
 import axios from 'axios'
 import './App.css';
 
-const getDirections = async (origin, dest) => {
-  const originToSend = origin.replace(/ /g, '+')
-  const destToSend = dest.replace(/ /g, '+')
+const google = window.google;
 
-  // fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${originToSend}+Staten+Island+NY&destination=${destToSend}+Staten+Island+NY&key=AIzaSyDwHLEMiluyIpzJI9VmRRbI8L4C_5w6VTA`, {
-  //   method:'GET',
-  //    headers: {
-  //      //'Content-Type': 'application/json',
-  //      'Access-Control-Allow-Origin': '*',
-  //      'Access-Control-Allow-Credentials': 'true'
-  //    },
-  //   mode: 'cors',
-  //    credentials: 'include',
-  // }).then(res => console.log(res.json())).catch(e => console.log(e))
-
-  //await axios.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${originToSend}+Staten+Island+NY&destination=${destToSend}+Staten+Island+NY&key=AIzaSyDwHLEMiluyIpzJI9VmRRbI8L4C_5w6VTA`.then(res => console.log(res)).catch(e => console.log(e))
-
-  axios({
-    method: 'get',
-    url: `https://maps.googleapis.com/maps/api/directions/json?origin=${originToSend}+Staten+Island+NY&destination=${destToSend}+Staten+Island+NY&key=AIzaSyDwHLEMiluyIpzJI9VmRRbI8L4C_5w6VTA`,
-    headers: {
-      'Access-Control-Allow-Origin': 'localhost:3000',
-    },
-    mode:'cors',
-    
-  }).then(res => console.log(res.json())).catch(e => console.log(e))
-  
-  // console.log(res);
-
+const calculateDirections = (origin, destination) => {
+  let directionService = new google.maps.DirectionsService(),
+      request = {
+        origin: origin,
+        destination: destination,
+        travelMode: 'DRIVING'
+      }
+  directionService.route(request, (result, status) => {
+    if (status == 'OK') {
+      console.log(result);
+    }
+  })
 }
 
 function App() {
@@ -49,7 +35,7 @@ function App() {
         placeholder={'Destination'}>
       </input>
 
-      <button onClick={() => getDirections(origin, dest)}>Display</button>
+      <button onClick={() => calculateDirections(origin, dest)}>Display</button>
     </div>
   );
 }
