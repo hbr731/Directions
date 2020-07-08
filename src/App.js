@@ -22,7 +22,7 @@ function App() {
         input.type = "text";
         input.id = `field ${i}`;
         input.placeholder = `address ${i + 1}`
-        input.onChange = (e) => {setWaypoints([...waypoints, e.target.value])}                //HERE!!!!
+        // input.onChange = (e) => {setWaypoints([...waypoints, e.target.value])}               
         textFields.appendChild(input);
         textFields.appendChild(document.createElement("br"));
         textFields.appendChild(document.createElement("br"));
@@ -70,7 +70,7 @@ function App() {
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div id="textFields"></div>                        {/*UNIQUE ID NAMES FOR EACH TEXT BOX*/}
+            <div id="textFields"></div>                        
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
