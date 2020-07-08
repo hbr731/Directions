@@ -8,16 +8,15 @@ function App() {
   const [origin, setOrigin] = useState("");
   const [fields, setFields] = useState(0);
   const [show, setShow] = useState(false);
-  const [waypoints, setWaypoints] = useState([]);
+  const [waypoints, setWaypoints] = useState({list:[]});
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  console.log(arr);
   useEffect(() => {
     if (show) {
       let textFields = document.getElementById("textFields");
-      console.log(textFields);
+      // console.log(textFields);
       for (let i = 0; i < fields; i++) {
         let input = document.createElement("input");
         input.type = "text";
@@ -28,10 +27,23 @@ function App() {
         textFields.appendChild(document.createElement("br"));
         //   console.log(input)
         // }
-        console.log(i + " " + input);
+        // console.log(i + " " + input);
       }
     }
   }, [show]);
+
+  let getWaypoints = () => {
+    waypoints.list = []
+    for(let i = 0; i < fields; i++) {
+      let name = "field"+i;
+      console.log(name);
+      let currentField = document.getElementsByName(name)[0];
+      console.log(currentField)
+      waypoints.list.push({
+        location:currentField.value,
+        stopover: true})
+    }
+  }
 
   return (
     <div className="App">
@@ -57,7 +69,7 @@ function App() {
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div id="textFields"></div>                         //UNIQUE ID NAMES FOR EACH TEXT BOX
+            <div id="textFields"></div>                        {/*UNIQUE ID NAMES FOR EACH TEXT BOX*/}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
@@ -65,7 +77,10 @@ function App() {
             </Button>
             <Button
               variant="primary"
-              onClick={() => calculateDistance(origin, origin, waypoints)}
+              onClick={() => {
+                getWaypoints();
+                calculateDistance(origin, origin, waypoints.list)}
+              }
             >
               Save Changes
             </Button>
