@@ -13,22 +13,19 @@ function App() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  console.log(arr);
   useEffect(() => {
     if (show) {
       let textFields = document.getElementById("textFields");
-      console.log(textFields);
+
       for (let i = 0; i < fields; i++) {
         let input = document.createElement("input");
         input.type = "text";
-        input.name = "field" + i;
-        //if(typeof textFields === null) {
+        input.id = `field ${i}`;
+        input.placeholder = `address ${i + 1}`
+        input.onChange = (e) => {setWaypoints([...waypoints, e.target.value])}                //HERE!!!!
         textFields.appendChild(input);
         textFields.appendChild(document.createElement("br"));
         textFields.appendChild(document.createElement("br"));
-        //   console.log(input)
-        // }
-        console.log(i + " " + input);
       }
     }
   }, [show]);
@@ -57,7 +54,7 @@ function App() {
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div id="textFields"></div>                         //UNIQUE ID NAMES FOR EACH TEXT BOX
+            <div id="textFields"></div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
@@ -65,7 +62,11 @@ function App() {
             </Button>
             <Button
               variant="primary"
-              onClick={() => calculateDistance(origin, origin, waypoints)}
+              onClick={() => {
+                // calculateDistance(origin, origin, waypoints)
+                console.log(`origin = ${origin}`)
+                console.log(`waypoints = ${waypoints}`)
+              }}
             >
               Save Changes
             </Button>
