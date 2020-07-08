@@ -20,7 +20,7 @@ function App() {
       for (let i = 0; i < fields; i++) {
         let input = document.createElement("input");
         input.type = "text";
-        input.name = `field ${i}`;
+        input.name = `field${i}`;
         input.placeholder = `address ${i + 1}`
         // input.onChange = (e) => {setWaypoints([...waypoints, e.target.value])}               
         textFields.appendChild(input);
