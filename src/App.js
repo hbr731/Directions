@@ -8,7 +8,7 @@ function App() {
   const [origin, setOrigin] = useState("");
   const [fields, setFields] = useState(0);
   const [show, setShow] = useState(false);
-  const [waypoints, setWaypoints] = useState({list:[]});
+  const [waypoints, setWaypoints] = useState({ list: [] });
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -33,17 +33,18 @@ function App() {
   }, [show]);
 
   let getWaypoints = () => {
-    waypoints.list = []
-    for(let i = 0; i < fields; i++) {
-      let name = "field"+i;
+    waypoints.list = [];
+    for (let i = 0; i < fields; i++) {
+      let name = "field" + i;
       console.log(name);
       let currentField = document.getElementsByName(name)[0];
-      console.log(currentField)
+      console.log(currentField);
       waypoints.list.push({
-        location:currentField.value,
-        stopover: true})
+        location: currentField.value,
+        stopover: true,
+      });
     }
-  }
+  };
 
   return (
     <div className="App">
@@ -58,7 +59,10 @@ function App() {
             setFields(e.target.value);
           }}
         ></input>
-        <button id="initialButton" onClick={() => handleShow()}>
+        <button id="initialButton" onClick={() => {
+            handleShow();
+            localStorage.setItem("fields", fields);
+          }}>
           submit
         </button>
       </div>
@@ -69,7 +73,7 @@ function App() {
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div id="textFields"></div>                        {/*UNIQUE ID NAMES FOR EACH TEXT BOX*/}
+            <div id="textFields"></div> {/*UNIQUE ID NAMES FOR EACH TEXT BOX*/}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
@@ -77,10 +81,11 @@ function App() {
             </Button>
             <Button
               variant="primary"
-              onClick={() => {
-                getWaypoints();
-                calculateDistance(origin, origin, waypoints.list)}
-              }
+              id="submit"
+              // onClick={() => {
+              //   getWaypoints();
+              //   calculateDistance(origin, waypoints.list);
+              // }}
             >
               Save Changes
             </Button>
