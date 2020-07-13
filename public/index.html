@@ -10,7 +10,7 @@
       content="Web site created using create-react-app"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAhZta_RCHs4AFUSsG6SKn07WqdHOHBcUM&sensor=false&callback=initializeMap&libraries=places"></script>
+    <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAhZta_RCHs4AFUSsG6SKn07WqdHOHBcUM&sensor=false&callback=initializeMap&libraries=places"></script> -->
 
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -27,30 +27,114 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhZta_RCHs4AFUSsG6SKn07WqdHOHBcUM&sensor=false&callback=initMap&libraries=places"
+    ></script>
+
+    <style type="text/css">
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        height: 100%;
+        float: left;
+        width: 70%;
+        height: 100%;
+      }
+
+      #directionspanel {
+        margin-top: 10px;
+        background-color: #ffee77;
+        padding: 10px;
+        overflow: scroll;
+        height: 174px;
+      }
+    </style>
+
+
+    <script>
+      (function (exports) {
+        function initMap() {
+          var directionsRenderer = new google.maps.DirectionsRenderer(),
+            directionsService = new google.maps.DirectionsService();
+          var map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 40.73061, lng: -73.935242 },
+            zoom: 17,
+          });
+          directionsRenderer.setMap(map);
+          document
+            .getElementById("submit")
+            .addEventListener("click", function () {
+              calculateAndDisplayRoute(directionsService, directionsRenderer);
+            });
+        }
+        function calculateAndDisplayRoute(
+          directionsService,
+          directionsRenderer
+        ) {
+          let waypts = [];
+          let origin = document.getElementById("origin").value;
+          let waypoints = document.getElementById("waypoints").value.split(',');
+          
+          console.log(waypoints);
+
+          for (let i = 0; i< waypoints.length; i++) {
+            waypts.push({
+              location:waypoints[i],
+              stopover: true
+            })
+          }
+
+          console.log(waypts);
+
+          directionsService.route(
+            {
+              origin: origin,
+              destination: origin,
+              waypoints: waypts,
+              optimizeWaypoints: true,
+              travelMode: "DRIVING",
+            },
+            (result, status) => {
+              if (status == "OK") {
+                console.log(result);
+                directionsRenderer.setDirections(result);
+                var route = result.routes[0];
+                var summaryPanel = document.getElementById("directionspanel");
+                summaryPanel.innerHTML = "";
+                for (var i = 0; i < route.legs.length; i++) {
+                  var routeSegment = i + 1;
+                  summaryPanel.innerHTML +=
+                    "<b>Route Segment: " + routeSegment + "</b><br>";
+                  summaryPanel.innerHTML +=
+                    route.legs[i].start_address + " to ";
+                  summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
+                  summaryPanel.innerHTML +=
+                    route.legs[i].distance.text + "<br><br>";
+                }
+              } else {
+                window.alert("Directions request failed due to " + status);
+              }
+            }
+          );
+        }
+        exports.calculateAndDisplayRoute = calculateAndDisplayRoute;
+        exports.initMap = initMap;
+      })((this.window = this.window || {}));
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <input type="submit" id="submit" value="submit" />
     <div id="map"></div>
-    <script>
-      function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat:40.705076, lng = -74.00916},
-          zoom: 17
-        })
-      }
-    </script>
-    <script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAhZta_RCHs4AFUSsG6SKn07WqdHOHBcUM&callback=initMap"
-    async></script>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <div id="directionspanel"></div>
+    
   </body>
 </html>
