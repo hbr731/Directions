@@ -33,17 +33,6 @@ export default function App() {
     <div className="App">
       <div id="firstDiv">
         <input
-          id="origin"
-          onChange={(e) => setOrigin(e.target.value)}
-          placeholder={"Origin"}
-        ></input>
-        {/* <input
-          id="initialTextField"
-          onChange={(e) => {
-            setFields(e.target.value);
-          }}
-        ></input> */}
-        <input
           id="waypoints"
           placeholder="waypoints separated with a comma"
           onChange={(e) => {

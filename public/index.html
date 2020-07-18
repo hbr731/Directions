@@ -59,14 +59,52 @@
 
 
     <script>
+      let latitude
+      let longitude
+
       (function (exports) {
-        function initMap() {
+
+        function initMap() 
+        {
+          let initialPosition = { lat: 59.325, lng: 18.069 };
+
           var directionsRenderer = new google.maps.DirectionsRenderer(),
             directionsService = new google.maps.DirectionsService();
+          
           var map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: 40.73061, lng: -73.935242 },
-            zoom: 17,
+            center: initialPosition,
+            zoom: 15,
           });
+
+          const marker = new google.maps.Marker({ map, position: initialPosition });
+
+            // Get user's location
+          if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+              position => {
+                console.log(`Lat: ${position.coords.latitude} Lng: ${position.coords.longitude}`);
+
+                latitude = position.coords.latitude
+                longitude = position.coords.longitude
+
+                // Set marker's position.
+                marker.setPosition({
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                });
+
+                // Center map to user's position.
+                map.panTo({
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                });
+              },
+              err => console.log(`Error (${err.code}): ${getPositionErrorMessage(err.code)}`)
+            );
+          } else {
+            alert('Geolocation is not supported by your browser.');
+          }
+        
           directionsRenderer.setMap(map);
           document
             .getElementById("submit")
@@ -74,15 +112,14 @@
               calculateAndDisplayRoute(directionsService, directionsRenderer);
             });
         }
+
+
         function calculateAndDisplayRoute(
           directionsService,
           directionsRenderer
         ) {
           let waypts = [];
-          let origin = document.getElementById("origin").value;
           let waypoints = document.getElementById("waypoints").value.split(',');
-          
-          console.log(waypoints);
 
           for (let i = 0; i< waypoints.length; i++) {
             waypts.push({
@@ -95,8 +132,8 @@
 
           directionsService.route(
             {
-              origin: origin,
-              destination: origin,
+              origin: new google.maps.LatLng(latitude, longitude),
+              destination: new google.maps.LatLng(latitude, longitude),
               waypoints: waypts,
               optimizeWaypoints: true,
               travelMode: "DRIVING",
