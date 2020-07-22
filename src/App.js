@@ -3,7 +3,7 @@ import "./App.css";
 
 import initMap from './components/calculate'
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Navbar, FormControl, Form } from "react-bootstrap";
 
 export default function App() {
   const [waypoints, setWaypoints] = useState();
@@ -14,20 +14,22 @@ export default function App() {
 
   return (
     <div className="App">
-      <div id="firstDiv">
-        <input
-          id="waypoints"
-          placeholder="waypoints separated with a comma"
-          onChange={(e) => {
-            setWaypoints(e.target.value);
-          }}
-        ></input>
-        <button onClick={() => 
-          {
-            initMap(true, waypoints);
-          }} id="submit" value="submit" />
-      </div>
-
+      <Navbar bg='dark'>
+      {/* <Form inline> */}
+          <FormControl
+            id="waypoints"
+            className='mr-sm-2'
+            placeholder="Addresses separated with a comma"
+            onChange={(e) => {
+              setWaypoints(e.target.value);
+            }}
+          ></FormControl>
+          <Button onClick={() => 
+            {
+              initMap(true, waypoints);
+            }} type= 'submit' id="submit" value="submit">Calculate</Button>
+        {/* </Form> */}
+      </Navbar>
       
     </div>
   );
