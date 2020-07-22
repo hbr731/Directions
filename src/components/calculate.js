@@ -6,15 +6,15 @@ export default function initMap(calculate, waypointString)
 {
     let initialPosition = { lat: 59.325, lng: 18.069 };
 
-    var directionsRenderer = new google.maps.DirectionsRenderer(),
-    directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new window.google.maps.DirectionsRenderer(),
+    directionsService = new window.google.maps.DirectionsService();
     
-    var map = new google.maps.Map(document.getElementById("map"), {
+    var map = new window.google.maps.Map(document.getElementById("map"), {
     center: initialPosition,
     zoom: 15,
     });
 
-    const marker = new google.maps.Marker({ map, position: initialPosition });
+    const marker = new window.google.maps.Marker({ map, position: initialPosition });
 
     // Get user's location
     if ('geolocation' in navigator) {
@@ -66,8 +66,8 @@ const calculateAndDisplayRoute = (directionsService, directionsRenderer, waypoin
 
     directionsService.route(
     {
-        origin: new google.maps.LatLng(latitude, longitude),
-        destination: new google.maps.LatLng(latitude, longitude),
+        origin: new window.google.maps.LatLng(latitude, longitude),
+        destination: new window.google.maps.LatLng(latitude, longitude),
         waypoints: waypts,
         optimizeWaypoints: true,
         travelMode: "DRIVING",
