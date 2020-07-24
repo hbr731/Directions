@@ -88,7 +88,7 @@ const calculateAndDisplayRoute = (directionsService, directionsRenderer, waypoin
                 summaryPanel.innerHTML +=
                 route.legs[i].distance.text + "<br><br>";
             }
-            document.getElementById('info').innerHTML = result
+            // document.getElementById('info').innerHTML = result
         } else {
             window.alert("Directions request failed due to " + status);
         }

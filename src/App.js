@@ -17,7 +17,6 @@ const checkAddress = (waypts) => {
       ret[i] = ret[i] + ' staten island NY'
     }
   }
-  console.log(ret)
   return ret
 }
 
