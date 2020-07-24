@@ -20,7 +20,7 @@ export default function initMap(calculate, waypointString)
     if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
         position => {
-        console.log(`Lat: ${position.coords.latitude} Lng: ${position.coords.longitude}`);
+        // console.log(`Lat: ${position.coords.latitude} Lng: ${position.coords.longitude}`);
 
         latitude = position.coords.latitude
         longitude = position.coords.longitude
@@ -52,10 +52,9 @@ export default function initMap(calculate, waypointString)
 }
 
 
-const calculateAndDisplayRoute = (directionsService, directionsRenderer, waypointString) =>
+const calculateAndDisplayRoute = (directionsService, directionsRenderer, waypoints) =>
 {
     let waypts = [];
-    let waypoints = waypointString.split(',');
 
     for (let i = 0; i< waypoints.length; i++) {
     waypts.push({
@@ -74,23 +73,24 @@ const calculateAndDisplayRoute = (directionsService, directionsRenderer, waypoin
     },
     (result, status) => {
         if (status == "OK") {
-        console.log(result);
-        directionsRenderer.setDirections(result);
-        var route = result.routes[0];
-        var summaryPanel = document.getElementById("directionspanel");
-        summaryPanel.innerHTML = "";
-        for (var i = 0; i < route.legs.length; i++) {
-            var routeSegment = i + 1;
-            summaryPanel.innerHTML +=
-            "<b>Route Segment: " + routeSegment + "</b><br>";
-            summaryPanel.innerHTML +=
-            route.legs[i].start_address + " to ";
-            summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
-            summaryPanel.innerHTML +=
-            route.legs[i].distance.text + "<br><br>";
-        }
+            console.log(result);
+            directionsRenderer.setDirections(result);
+            var route = result.routes[0];
+            var summaryPanel = document.getElementById("directionspanel");
+            summaryPanel.innerHTML = "";
+            for (var i = 0; i < route.legs.length; i++) {
+                var routeSegment = i + 1;
+                summaryPanel.innerHTML +=
+                "<b>Route Segment: " + routeSegment + "</b><br>";
+                summaryPanel.innerHTML +=
+                route.legs[i].start_address + " to ";
+                summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
+                summaryPanel.innerHTML +=
+                route.legs[i].distance.text + "<br><br>";
+            }
+            document.getElementById('info').innerHTML = result
         } else {
-        window.alert("Directions request failed due to " + status);
+            window.alert("Directions request failed due to " + status);
         }
     }
     );

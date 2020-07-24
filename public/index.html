@@ -37,22 +37,23 @@
       html,
       body {
         height: 100%;
-        margin: 0;
         padding: 0;
       }
-
+ 
       #map {
-        float: left;
-        width: 100%;
-        height: 100%;
+        float: right;
+        width: 70%;
+        height: 92%;
+        margin: 0;
       }
 
       #directionspanel {
+        float: left;
         margin-top: 10px;
-        background-color: #ffee77;
         padding: 10px;
-        overflow: scroll;
-        height: 174px;
+        overflow: auto;
+        width: 30%;
+        height: 50%;
       }
     </style>
 
@@ -64,9 +65,8 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-
-    <div id="map"></div>
     <div id="directionspanel"></div>
-    
+    <div id="map"></div>
+    <div id="info"></div>
   </body>
 </html>
