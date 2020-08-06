@@ -1,8 +1,9 @@
 let latitude
 let longitude
 
+export let resultToExport = ['']
 
-export default function initMap(calculate, waypointString) 
+export default function initMap(calculate, waypointArray) 
 {
     let initialPosition = { lat: 59.325, lng: 18.069 };
 
@@ -47,7 +48,7 @@ export default function initMap(calculate, waypointString)
 
     if(calculate)
     {
-        calculateAndDisplayRoute(directionsService, directionsRenderer, waypointString);   
+        calculateAndDisplayRoute(directionsService, directionsRenderer, waypointArray)
     }
 }
 
@@ -64,34 +65,21 @@ const calculateAndDisplayRoute = (directionsService, directionsRenderer, waypoin
     }
 
     directionsService.route(
-    {
-        origin: new window.google.maps.LatLng(latitude, longitude),
-        destination: new window.google.maps.LatLng(latitude, longitude),
-        waypoints: waypts,
-        optimizeWaypoints: true,
-        travelMode: "DRIVING",
-    },
-    (result, status) => {
-        if (status == "OK") {
-            console.log(result);
-            directionsRenderer.setDirections(result);
-            var route = result.routes[0];
-            var summaryPanel = document.getElementById("directionspanel");
-            summaryPanel.innerHTML = "";
-            for (var i = 0; i < route.legs.length; i++) {
-                var routeSegment = i + 1;
-                summaryPanel.innerHTML +=
-                "<b>Route Segment: " + routeSegment + "</b><br>";
-                summaryPanel.innerHTML +=
-                route.legs[i].start_address + " to ";
-                summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
-                summaryPanel.innerHTML +=
-                route.legs[i].distance.text + "<br><br>";
+        {
+            origin: new window.google.maps.LatLng(latitude, longitude),
+            destination: new window.google.maps.LatLng(latitude, longitude),
+            waypoints: waypts,
+            optimizeWaypoints: true,
+            travelMode: "DRIVING",
+        },
+        (res, status) => {
+            if (status == "OK") {
+                console.log(res)
+                directionsRenderer.setDirections(res);
+                resultToExport = res.routes[0].legs
+            } else {
+                window.alert("Directions request failed - " + status);
             }
-            // document.getElementById('info').innerHTML = result
-        } else {
-            window.alert("Directions request failed due to " + status);
         }
-    }
     );
 }
