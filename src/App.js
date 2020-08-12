@@ -125,6 +125,7 @@ export default function App() {
       </Modal.Body>
 
       <Modal.Footer>
+      <Button className='btn-danger' onClick={() => setModal(false)}>Close</Button>
         <Button onClick={() =>
           {
             for(let i = 1; i <= counter; i++)
@@ -135,7 +136,6 @@ export default function App() {
             initMap(true, checkAddress(waypoints))
             setModal(false)
           }}>Route</Button>
-        <Button className='btn-danger' onClick={() => setModal(false)}>Close</Button>
       </Modal.Footer>
     </Modal>
 
