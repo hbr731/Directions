@@ -29,7 +29,7 @@ export default function App() {
   const [modal2, setModal2] = useState(false) // to display or hide modal 2
   let count = 1 //for second modal
   const [distance, setDistance] = useState(0) //for second modal
-  const [duration, setDuration] = useState(0) //for second modal
+  const [duration, setDuration] = useState({}) //for second modal
 
   useEffect(() => {
     initMap(false) 
@@ -39,23 +39,43 @@ export default function App() {
   useEffect(() => {                                         // for calculating distance and duration of the trip
     if(modal2 == true && resultToExport != undefined)
     {
-      let dist = 0
-      resultToExport.map((data) => {
+      let totalDistance = 0
+      let totalDuration = 0
+
+      resultToExport.map((data) => { 
+
+        // calculating distance
         if(data.distance.text.includes(','))
         {
           let regex = /\d+((.|,)\d+)?/
           let result = data.distance.text.match(regex)
-          dist += parseInt(result[0].split(',')[0] + result[0].split(',')[1])
-          // setDuration(duration + parseFloat(data.duration.text))
+          totalDistance += parseInt(result[0].split(',')[0] + result[0].split(',')[1])
         }
 
         else
         {
-          dist += parseFloat(data.distance.text)
+          totalDistance += parseFloat(data.distance.text)
         }
+
+        // calculating duration
+        let dur = data.duration.text.split(' ')
+        
+        for(let i = 0; i < dur.length; i++) {
+          if(dur[i] === 'day' || dur[i] === 'days') totalDuration += (1440 * parseInt(dur[i - 1]))
+
+          else if(dur[i] === 'hours' || dur[i] === 'hour') totalDuration += (60 * parseInt(dur[i - 1]))
+
+          else if(dur[i] === 'min' || dur[i] === 'mins') totalDuration += (parseInt(dur[i - 1]))
+        }
+
       })
-      
-      setDistance(dist)
+
+      setDistance(totalDistance)
+      setDuration({
+        days: parseInt(totalDuration / (60 * 24)),
+        hours: parseInt((totalDuration % (24*60)) / 60),
+        mins: parseInt((totalDuration % (24 * 60)) % 60)
+      })
 
     }
   }, [resultToExport])
@@ -137,17 +157,25 @@ export default function App() {
       </Modal.Header>
 
       <Modal.Body>
-        {
-          modal2 === true ? 
-            resultToExport.map((data) => 
-              <p>{count++}: {data.end_address}</p>
-            )
-            :
-            ''
-        }
-
-        <h3>Distance:</h3><p>{distance.toFixed(1)} miles</p>
-        <h3>Duration:</h3><p>{duration} minutes</p>
+        <div className='flex'>
+          <div className='float-right w-50'>
+          {
+              resultToExport.map((data) => 
+                data === '' ? 
+                  <h2 className='text-center'>No Directions</h2>
+                  :
+                  <p className='text-left'>{count++}: {data.end_address}</p>
+              )
+          }
+          </div>
+          <div className='float-left w-50'> 
+            <h3 className='text-left'>Distance:</h3><p>{distance.toFixed(1)} miles</p>
+            <h3 className='text-left'>Duration:</h3>
+              {duration.days != 0 ? <p>{duration.days} days</p> : ''}
+              {duration.hours != 0 ? <p>{duration.hours} hours</p> : ''}
+              <p>{duration.mins} mins</p>
+          </div>
+        </div>
 
       </Modal.Body>
 
@@ -161,12 +189,6 @@ export default function App() {
 }
 
 
-
-  // - create two buttons for modals
-  //   - one for editing or adding address
-  //     - show entered addresses in textboxes when button is clicked
-  //   - one for viewing the result
-
-
-  //TODO: calculate duration of the trip
   //TODO: show entered addresses in textboxes in modal1 when button clicked
+  //TODO: disable calculate button if user hasn't entered an address
+  //TODO: if user has an extra address field and clicks submit, remove the field and then send request to the API
