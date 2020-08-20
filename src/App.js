@@ -21,9 +21,16 @@ const checkAddress = (waypts) => { // Checking the user input of the address
   return ret
 }
 
+const toggleRouteBtn = () => {
+  setTimeout(() => {
+    if (document.getElementById('0').value.length < 1) document.getElementById('route').disabled = true
+    else document.getElementById('route').disabled = false  
+  }, 30);
+}
+
 export default function App() {
   let waypoints = []
-  let counter = 0 // for populating waypoints array in first modal
+  const [counter, setCounter] = useState(0) // for populating waypoints array in first modal
 
   const [modal, setModal] = useState(false) // to display or hide modal 1
   const [modal2, setModal2] = useState(false) // to display or hide modal 2
@@ -32,8 +39,12 @@ export default function App() {
   const [duration, setDuration] = useState({}) //for second modal
 
   useEffect(() => {
+    localStorage.clear()
     initMap(false) 
     setModal(true)
+    setTimeout(() => {
+      toggleRouteBtn()
+    }, 30);
   }, [])
 
   useEffect(() => {                                         // for calculating distance and duration of the trip
@@ -80,21 +91,65 @@ export default function App() {
     }
   }, [resultToExport])
 
-  // useEffect(() => {
-  //   if(waypoints == undefined || waypoints == '')            // to disable or enable the calculate button to prevent user from pressing it without entering any input
-  //   {
-  //     document.getElementById('submit').disabled = true
-  //   }
-
-  //   else{
-  //     document.getElementById('submit').disabled = false
-  //   }
-  // },[waypoints])
-
+  
   return (
     <div className="App">
+
+    <div className='mb-2 mt-2'>
+      <Button className='mr-2 btn-success' 
+        onClick=
+        {() => 
+          {
+            if(localStorage.getItem('addresses') != null)               // fetching data from localstorage and setting the waypoints array and displaying it in modal 1
+            {
+              let tempCounter = 0
+              waypoints = JSON.parse(localStorage.getItem('addresses'))
+
+              setTimeout(() => {
+                document.getElementById('0').value = waypoints[0]
+                for(let i = 1; i < waypoints.length; i++)
+                {
+                  //span to group the textfield and delete button
+                  let span = document.createElement('span')
+                  span.id = `span${counter + 1}`
+                  span.style.display = 'flex'
+
+                  //textfield
+                  let textField = document.createElement('input')
+                  textField.className = 'form-control mt-2'
+                  textField.placeholder = 'Enter address'
+                  textField.value = waypoints[i]
+                  textField.id = `${tempCounter + 1}`
+                  span.appendChild(textField)
+
+                  //delete button
+                  let deleteButton = document.createElement('button')
+                  deleteButton.onclick = (e) => {
+                    e.preventDefault()
+                    document.getElementById(`span${counter + 1}`).remove()
+                    setCounter(counter - 1)
+                    console.log(`counter = ${counter}`)
+                  }
+                  deleteButton.className = 'btn btn-rounded fa fa-trash btn-danger mt-2 ml-2 mr-2 mb-2'
+                  span.appendChild(deleteButton)
+
+                  document.getElementById('form').appendChild(span)
+                  tempCounter += 1
+                }
+                setCounter(tempCounter)
+              }, 10);
+            }
+            toggleRouteBtn()
+            setModal(true)
+          }
+        }>
+        Add/Edit Addresses
+      </Button>
+
+      <Button className='btn-success' onClick={() => setModal2(true)}>Show Waypoints</Button>
+    </div>
     
-    {/* FIRST MODAL */}
+                                                                          {/* FIRST MODAL */}
     <Modal show={modal}>
       <Modal.Header>
         <Modal.Title id="contained-modal-title">
@@ -105,52 +160,80 @@ export default function App() {
       <Modal.Body>
         <Form id='form'>
           <Form.Label className='label'>Enter addresses</Form.Label>
+
+          <Button className='float-right ml-2 mb-2 btn-warning' onClick={() => window.location.reload()}>
+              New Route
+          </Button>
           
           <Button className='float-right mb-2 btn-success' onClick={() =>
               {
+                //span to group the textfield and delete button
+                let span = document.createElement('span')
+                span.id = `span${counter + 1}`
+                span.style.display = 'flex'
+
+                //textfield
                 let textField = document.createElement('input')
                 textField.className = 'form-control mt-2'
                 textField.placeholder = 'Enter address'
                 textField.id = `${counter + 1}`
-                document.getElementById('form').appendChild(textField)
-                counter += 1
-                // value = document.getElementById(`${counter + 1}`) == undefined ? '' : waypoints[counter + 1]
+                span.appendChild(textField)
+
+                //delete button
+                let deleteButton = document.createElement('button')
+                deleteButton.onclick = (e) => {
+                  e.preventDefault()
+                  document.getElementById(`span${counter + 1}`).remove()
+                  setCounter(counter - 1)
+                }
+                deleteButton.className = 'btn btn-rounded fa fa-trash btn-danger mt-2 ml-2 mr-2 mb-2'
+                span.appendChild(deleteButton)
+
+                document.getElementById('form').appendChild(span)
+                setCounter(counter => counter + 1)
               }
             }>
-              Add
+              Add Address
             </Button>
-          <Form.Control onChange={(e) => waypoints[0] = e.target.value} className='textbox' type='text' placeholder='Enter address'/>
+          
+          <Form.Control id='0' onChange={(e) => 
+            {
+              waypoints[0] = e.target.value
+              toggleRouteBtn()
+            }} 
+            className='textbox' type='text' placeholder='Enter address'
+          />
         
         </Form>
       </Modal.Body>
 
       <Modal.Footer>
-      <Button className='btn-danger' onClick={() => setModal(false)}>Close</Button>
-        <Button onClick={() =>
+        <Button className='btn-danger' onClick={() => setModal(false)}>Close</Button>
+        
+        <Button 
+          id ='route'
+          onClick={() =>
           {
-            for(let i = 1; i <= counter; i++)
+            for(let i = 0; i <= counter; i++)
             {
               waypoints[i] = document.getElementById(i).value
             }
-
+            localStorage.setItem('addresses', JSON.stringify(waypoints))
             initMap(true, checkAddress(waypoints))
             setModal(false)
-          }}>Route</Button>
+            setCounter(0)
+          }}>
+            Route
+        </Button>
+
       </Modal.Footer>
     </Modal>
 
 
 
-    <div className='mb-2 mt-2'>
-      <Button className='mr-2 btn-success' onClick={() => setModal(true)}>Add/Edit Addresses</Button>
-      <Button className='btn-success' onClick={() => setModal2(true)}>Show Waypoints</Button>
-    </div>
-
-
-
-    {/* SECOND MODAL */}
+                                                                              {/* SECOND MODAL */}
     <Modal show={modal2}>
-      <Modal.Header>
+      <Modal.Header> 
         <Modal.Title id="contained-modal-title">
           Waypoints
         </Modal.Title>
@@ -189,6 +272,6 @@ export default function App() {
 }
 
 
-  //TODO: show entered addresses in textboxes in modal1 when button clicked
-  //TODO: disable calculate button if user hasn't entered an address
+  //TODO: show entered addresses in textboxes in modal1 when button clicked                                         DONE
+  //TODO: disable calculate button if user hasn't entered an address                                                DONE
   //TODO: if user has an extra address field and clicks submit, remove the field and then send request to the API
