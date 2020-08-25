@@ -111,7 +111,7 @@ export default function App() {
                 {
                   //span to group the textfield and delete button
                   let span = document.createElement('span')
-                  span.id = `span${counter + 1}`
+                  span.id = `span${tempCounter + 1}`
                   span.style.display = 'flex'
 
                   //textfield
@@ -126,9 +126,9 @@ export default function App() {
                   let deleteButton = document.createElement('button')
                   deleteButton.onclick = (e) => {
                     e.preventDefault()
-                    document.getElementById(`span${counter + 1}`).remove()
-                    setCounter(counter - 1)
-                    console.log(`counter = ${counter}`)
+                    document.getElementById(`span${tempCounter}`).remove()
+                    tempCounter -= 1
+                    setCounter(counter => counter - 1)
                   }
                   deleteButton.className = 'btn btn-rounded fa fa-trash btn-danger mt-2 ml-2 mr-2 mb-2'
                   span.appendChild(deleteButton)
@@ -165,7 +165,8 @@ export default function App() {
               New Route
           </Button>
           
-          <Button className='float-right mb-2 btn-success' onClick={() =>
+          <Button className='float-right mb-2 btn-success' 
+            onClick={() =>
               {
                 //span to group the textfield and delete button
                 let span = document.createElement('span')
@@ -184,7 +185,7 @@ export default function App() {
                 deleteButton.onclick = (e) => {
                   e.preventDefault()
                   document.getElementById(`span${counter + 1}`).remove()
-                  setCounter(counter - 1)
+                  setCounter(counter => counter - 1)
                 }
                 deleteButton.className = 'btn btn-rounded fa fa-trash btn-danger mt-2 ml-2 mr-2 mb-2'
                 span.appendChild(deleteButton)
@@ -214,9 +215,13 @@ export default function App() {
           id ='route'
           onClick={() =>
           {
+            let waypointCounter = 0
             for(let i = 0; i <= counter; i++)
             {
-              waypoints[i] = document.getElementById(i).value
+              if(!document.getElementById(i).value == "")
+              {
+                waypoints[waypointCounter++] = document.getElementById(i).value
+              }
             }
             localStorage.setItem('addresses', JSON.stringify(waypoints))
             initMap(true, checkAddress(waypoints))
@@ -270,8 +275,3 @@ export default function App() {
     </div>
   );
 }
-
-
-  //TODO: show entered addresses in textboxes in modal1 when button clicked                                         DONE
-  //TODO: disable calculate button if user hasn't entered an address                                                DONE
-  //TODO: if user has an extra address field and clicks submit, remove the field and then send request to the API
